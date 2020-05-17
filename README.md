@@ -3,10 +3,11 @@
 
 # Rpvt
 
-`Rpvt` is a correlation-based PVT package for dry gas, wet gas, black
-oil, and water samples. It generates PVT properties of hydrocarbons and
-water samples in a tabular format at a constant temperature from
-atmospheric pressure up to the pressure of interest.
+`Rpvt` is a correlation-based PVT (Pressure-Volume-Temperature) package
+for dry gas, wet gas, black oil, and water samples. It generates PVT
+properties of hydrocarbons and water samples in a tabular format at a
+constant temperature from atmospheric pressure up to the pressure of
+interest.
 
 ## Installation
 

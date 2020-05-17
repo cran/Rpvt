@@ -19,7 +19,7 @@ double PB_STANDING(double t, const double api, const double spgr, const double r
   // p in psia
   t = t - 459.67;
   double Pb;
-  Pb = 18.2 * (pow((rsi / spgr),0.83) * pow(10,(0.00091 * t - 0.0125 * api)) - 1.4);
+  Pb = 18.2 * (std::pow((rsi / spgr),0.83) * std::pow(10.,(0.00091 * t - 0.0125 * api)) - 1.4);
   return(Pb);
 }
 
@@ -31,8 +31,8 @@ arma::vec RSi_STANDING(double t, const double pb, const double api, const double
   // p in psia
   arma::vec Rsi(2);
   t = t - 459.67;
-  Rsi(0) = spgr * pow((pb / 18.2 + 1.4) * pow(10,(0.0125 * api - 0.00091 * t)),(1 / 0.83));
-  Rsi(1) = spgr * (1 / 0.83) * (1 / 18.2) * pow((pb / 18.2 + 1.4),(1 / 0.83) - 1) * pow(pow(10,0.0125 * api - 0.00091 * t),1 / 0.83);
+  Rsi(0) = spgr * std::pow((pb / 18.2 + 1.4) * std::pow(10.,(0.0125 * api - 0.00091 * t)),(1. / 0.83));
+  Rsi(1) = spgr * (1. / 0.83) * (1. / 18.2) * std::pow((pb / 18.2 + 1.4),(1. / 0.83) - 1.) * std::pow(std::pow(10.,0.0125 * api - 0.00091 * t),1. / 0.83);
   return(Rsi);
 }
 
@@ -48,10 +48,10 @@ arma::vec RS_STANDING(double t, const double p, const double api, const double s
   t = t - 459.67;
   if (p >= Pb) {
     Rs(0) = rsi;
-    Rs(1) = 0;
+    Rs(1) = 0.;
   } else {
-    Rs(0) = spgr * pow((p / 18.2 + 1.4) * pow(10,(0.0125 * api - 0.00091 * t)),(1 / 0.83));
-    Rs(1) = spgr * (1 / 0.83) * (1 / 18.2) * pow((p / 18.2 + 1.4),(1 / 0.83) - 1) * pow(pow(10,0.0125 * api - 0.00091 * t),1 / 0.83);
+    Rs(0) = spgr * std::pow((p / 18.2 + 1.4) * std::pow(10.,(0.0125 * api - 0.00091 * t)),(1. / 0.83));
+    Rs(1) = spgr * (1. / 0.83) * (1. / 18.2) * std::pow((p / 18.2 + 1.4),(1. / 0.83) - 1.) * std::pow(std::pow(10.,0.0125 * api - 0.00091 * t),1. / 0.83);
   }
   return(Rs);
 }
@@ -66,8 +66,8 @@ arma::vec BOB_STANDING(double t, const double api, const double spgr, const doub
   double spgr_o;
   arma::vec Bo(2);
   spgr_o = 141.5 / (131.5 + api);
-  Bo(0) = 0.9759 + 0.00012 * pow((rsi * pow(spgr / spgr_o,0.5) + 1.25 * t),1.2);
-  Bo(1) = 1.2 * 0.00012 * pow((rsi * pow(spgr / spgr_o,0.5) + 1.25 * t),0.2) * pow(spgr / spgr_o,0.5);
+  Bo(0) = 0.9759 + 0.00012 * std::pow((rsi * std::pow(spgr / spgr_o,0.5) + 1.25 * t),1.2);
+  Bo(1) = 1.2 * 0.00012 * std::pow((rsi * std::pow(spgr / spgr_o,0.5) + 1.25 * t),0.2) * std::pow(spgr / spgr_o,0.5);
   return(Bo);
 }
 
@@ -101,7 +101,7 @@ double CO_UNDERSAT_SPIVEY(double t, const double p, const double pb, const doubl
   double derivative_1; double derivative_2;double Cofb;double Co;
   t = t - 459.67;
   Xn = {log(api), log(spgr), log(pb), log(p/pb), log(rsi), log(t)};
-  double sum_z = 0;
+  double sum_z = 0.;
   for (int i = 0; i < 6; i++) {
     Zn(i) = C0n(i) + C1n(i) * Xn(i) + C2n(i) * Xn(i) *  Xn(i);
     sum_z = sum_z + Zn(i);
@@ -127,7 +127,7 @@ arma::vec BO_STANDING(double t, const double p, const double api, const double s
     // Co = CO_UNDERSAT_STANDING(t,p,api,spgr,rsi);
     Co = CO_UNDERSAT_SPIVEY(t,p,Pb,api,spgr,rsi);
     Bo(0) = Bob * exp(Co * (Pb - p));
-    Bo(1) = 0;
+    Bo(1) = 0.;
   } else {
     Rs = RS_STANDING(t,p,api,spgr,rsi)(0);
     Bo(0) = BOB_STANDING(t,api,spgr,Rs)(0);
@@ -195,7 +195,7 @@ double PB_VASQUEZ_BEGGS(double t, const double api, const double spgr, const dou
     c = {0.0178,1.187,23.931};
   }
   double Pb;
-  Pb = pow((rsi / c(0) / spgr / exp(c(2) * (api / t))), (1 / c(1)));
+  Pb = std::pow((rsi / c(0) / spgr / exp(c(2) * (api / t))), (1. / c(1)));
   return(Pb);
 }
 
@@ -213,8 +213,8 @@ arma::vec RSi_VASQUEZ_BEGGS(double t, const double pb, const double api, const d
   } else {
     c = {0.0178,1.187,23.931};
   }
-  Rsi(0) = c(0) * spgr * pow(pb,c(1)) * exp(c(2) * (api / t));
-  Rsi(1) = c(0) * c(1) * spgr * pow(pb,(c(1)-1)) * exp(c(2) * (api / t));
+  Rsi(0) = c(0) * spgr * std::pow(pb,c(1)) * exp(c(2) * (api / t));
+  Rsi(1) = c(0) * c(1) * spgr * std::pow(pb,(c(1)-1)) * exp(c(2) * (api / t));
   return(Rsi);
 }
 
@@ -236,10 +236,10 @@ arma::vec RS_VASQUEZ_BEGGS(double t, const double p, const double api, const dou
   Pb = PB_VASQUEZ_BEGGS(t,api,spgr,rsi);
   if (p >= Pb) {
     Rs(0) = rsi;
-    Rs(1) = 0;
+    Rs(1) = 0.;
   } else {
-    Rs(0) = c(0) * spgr * pow(p,c(1)) * exp(c(2) * (api / t));
-    Rs(1) = c(0) * c(1) * spgr * pow(p,(c(1)-1)) * exp(c(2) * (api / t));
+    Rs(0) = c(0) * spgr * std::pow(p,c(1)) * exp(c(2) * (api / t));
+    Rs(1) = c(0) * c(1) * spgr * std::pow(p,(c(1)-1.)) * exp(c(2) * (api / t));
   }
   return(Rs);
 }
@@ -258,8 +258,8 @@ arma::vec BOB_VASQUEZ_BEGGS(double t, const double api, const double spgr, const
     c = {4.67e-4,1.1e-5,1.377e-9};
   }
   t = t - 459.67;
-  Bo(0) = 1 + c(0) * rsi + c(1) * (api / spgr) * (t - 60) + c(2) * rsi * (api / spgr) * (t - 60);
-  Bo(1) = c(0) + c(2) * (api / spgr) * (t - 60);
+  Bo(0) = 1. + c(0) * rsi + c(1) * (api / spgr) * (t - 60.) + c(2) * rsi * (api / spgr) * (t - 60.);
+  Bo(1) = c(0) + c(2) * (api / spgr) * (t - 60.);
   return(Bo);
 }
 
@@ -271,7 +271,7 @@ double CO_UNDERSAT_VASQUEZ_BEGGS(double t, const double p, const double api, con
   // p in psia
   double Co;
   t = t - 459.67;
-  Co = 1e-5 * (-1433 + 5 * rsi + 17.2 * t - 1180 * spgr + 12.61 * api) / p;
+  Co = 1e-5 * (-1433 + 5. * rsi + 17.2 * t - 1180 * spgr + 12.61 * api) / p;
   return(Co);
 }
 
@@ -290,7 +290,7 @@ arma::vec BO_VASQUEZ_BEGGS(double t, const double p, const double api, const dou
     // Co = CO_UNDERSAT_VASQUEZ_BEGGS(t,p,api,spgr,rsi);
     Co = CO_UNDERSAT_SPIVEY(t,p,Pb,api,spgr,rsi);
     Bo(0) = Bob * exp(Co * (Pb - p));
-    Bo(1) = 0;
+    Bo(1) = 0.;
   } else {
     Rs = RS_VASQUEZ_BEGGS(t,p,api,spgr,rsi)(0);
     Bo(0) = BOB_VASQUEZ_BEGGS(t,api,spgr,Rs)(0);
@@ -360,8 +360,8 @@ double PB_FARSHAD_PETROSKY(double t, const double api, const double spgr, const 
   // p in psia
   double Pb;
   t = t - 459.67;
-  double x = 4.561e-5 * pow(t,1.3911) - 7.916e-4 * pow(api,1.541);
-  Pb = 112.727 * (pow(rsi,0.5774) * pow(10, x) / pow(spgr,0.8439) - 12.34);
+  double x = 4.561e-5 * std::pow(t,1.3911) - 7.916e-4 * std::pow(api,1.541);
+  Pb = 112.727 * (std::pow(rsi,0.5774) * std::pow(10., x) / std::pow(spgr,0.8439) - 12.34);
   return(Pb);
 }
 
@@ -373,9 +373,9 @@ arma::vec RSi_FARSHAD_PETROSKY(double t, const double pb, const double api, cons
   // p in psia
   arma::vec Rsi(2);
   t = t - 459.67;
-  double x = -4.561e-5 * pow(t,1.3911) + 7.916e-4 * pow(api,1.541);
-  Rsi(0) = pow((pb / 112.727 + 12.34) * pow(spgr,0.8439) * pow(10,x),1.73184);
-  Rsi(1) = (1.73184/112.727) * pow((pb / 112.727 + 12.34),0.73184) * pow(pow(spgr,0.8439) * pow(10,x),1.73184);
+  double x = -4.561e-5 * std::pow(t,1.3911) + 7.916e-4 * std::pow(api,1.541);
+  Rsi(0) = std::pow((pb / 112.727 + 12.34) * std::pow(spgr,0.8439) * std::pow(10.,x),1.73184);
+  Rsi(1) = (1.73184/112.727) * std::pow((pb / 112.727 + 12.34),0.73184) * std::pow(std::pow(spgr,0.8439) * std::pow(10.,x),1.73184);
   return(Rsi);
 }
 
@@ -391,11 +391,11 @@ arma::vec RS_FARSHAD_PETROSKY(double t, const double p, const double api, const 
   t = t - 459.67;
   if (p >= Pb) {
     Rs(0) = rsi;
-    Rs(1) = 0;
+    Rs(1) = 0.;
   } else {
-    double x = -4.561e-5 * pow(t,1.3911) + 7.916e-4 * pow(api,1.541);
-    Rs(0) = pow((p / 112.727 + 12.34) * pow(spgr,0.8439) * pow(10,x),1.73184);
-    Rs(1) = (1.73184/112.727) * pow((p / 112.727 + 12.34),0.73184) * pow(pow(spgr,0.8439) * pow(10,x),1.73184);
+    double x = -4.561e-5 * std::pow(t,1.3911) + 7.916e-4 * std::pow(api,1.541);
+    Rs(0) = std::pow((p / 112.727 + 12.34) * std::pow(spgr,0.8439) * std::pow(10.,x),1.73184);
+    Rs(1) = (1.73184/112.727) * std::pow((p / 112.727 + 12.34),0.73184) * std::pow(std::pow(spgr,0.8439) * std::pow(10.,x),1.73184);
   }
   return(Rs);
 }
@@ -409,8 +409,8 @@ arma::vec BOB_FARSHAD_PETROSKY(double t, const double api, const double spgr, co
   arma::vec Bo(2);
   double spgr_o = 141.5 / (131.5 + api);
   t = t - 459.67;
-  Bo(0) = 1.0113 + 7.2046e-5 * pow((pow(rsi,0.3738) * (pow(spgr,0.2914) / pow(spgr_o, 0.6265)) + 0.24626 * pow(t,0.5371)),3.0936);
-  Bo(1) = 7.2046e-5*3.0936*pow((pow(rsi,0.3738) * (pow(spgr,0.2914) / pow(spgr_o, 0.6265)) + 0.24626 * pow(t,0.5371)),2.0936)*0.3738*pow(rsi,-0.6262)*(pow(spgr,0.2914) / pow(spgr_o, 0.6265));
+  Bo(0) = 1.0113 + 7.2046e-5 * std::pow((std::pow(rsi,0.3738) * (std::pow(spgr,0.2914) / std::pow(spgr_o, 0.6265)) + 0.24626 * std::pow(t,0.5371)),3.0936);
+  Bo(1) = 7.2046e-5*3.0936*std::pow((std::pow(rsi,0.3738) * (std::pow(spgr,0.2914) / std::pow(spgr_o, 0.6265)) + 0.24626 * std::pow(t,0.5371)),2.0936)*0.3738*std::pow(rsi,-0.6262)*(std::pow(spgr,0.2914) / std::pow(spgr_o, 0.6265));
   return(Bo);
 }
 
@@ -422,7 +422,7 @@ double CO_UNDERSAT_FARSHAD_PETROSKY(double t, const double p, const double api, 
   // p in psia
   double Co;
   t = t - 459.67;
-  Co = 1.705e-7 * pow(rsi,0.69357) * pow(spgr,0.1885) * pow(api,0.3272) * pow(t,0.6729) * pow(p,-0.5906);
+  Co = 1.705e-7 * std::pow(rsi,0.69357) * std::pow(spgr,0.1885) * std::pow(api,0.3272) * std::pow(t,0.6729) * std::pow(p,-0.5906);
   return(Co);
 }
 
@@ -441,7 +441,7 @@ arma::vec BO_FARSHAD_PETROSKY(double t, const double p, const double api, const 
     // Co = CO_UNDERSAT_FARSHAD_PETROSKY(t,p,api,spgr,rsi);
     Co = CO_UNDERSAT_SPIVEY(t,p,Pb,api,spgr,rsi);
     Bo(0) = Bob * exp(Co * (Pb - p));
-    Bo(1) = 0;
+    Bo(1) = 0.;
   } else {
     Rs = RS_FARSHAD_PETROSKY(t,p,api,spgr,rsi)(0);
     Bo(0) = BOB_FARSHAD_PETROSKY(t,api,spgr,Rs)(0);
@@ -513,7 +513,7 @@ double DENSITY_FARSHAD_PETROSKY(double t, const double p, const double api, cons
     double Pb;
     double spgr_o = 141.5 / (131.5 + api);
     arma::vec a = {0.00538088,0.715082,-1.87784,3.1437,1.32657};
-    Pb = a(0) * pow(rsi,a(1)) * pow(spgr,a(2)) * pow(spgr_o,a(3)) * pow(t,a(4));
+    Pb = a(0) * std::pow(rsi,a(1)) * std::pow(spgr,a(2)) * std::pow(spgr_o,a(3)) * std::pow(t,a(4));
     return(Pb);
   }
 
@@ -526,8 +526,8 @@ arma::vec RSi_AL_MARHOUN(double t, const double pb, const double api, const doub
   arma::vec Rsi(2);
   arma::vec a = {1490.28,2.62605,1.398441,-4.396279,-1.85513};
   double spgr_o = 141.5 / (131.5 + api);
-  Rsi(0) = a(0) * pow(spgr,a(1)) * pow(pb,a(2)) * pow(spgr_o,a(3)) * pow(t,a(4));
-  Rsi(1) = a(2) * a(0) * pow(spgr,a(1)) * pow(pb,(a(2)-1)) * pow(spgr_o,a(3)) * pow(t,a(4));
+  Rsi(0) = a(0) * std::pow(spgr,a(1)) * std::pow(pb,a(2)) * std::pow(spgr_o,a(3)) * std::pow(t,a(4));
+  Rsi(1) = a(2) * a(0) * std::pow(spgr,a(1)) * std::pow(pb,(a(2)-1.)) * std::pow(spgr_o,a(3)) * std::pow(t,a(4));
   return(Rsi);
 }
 
@@ -544,10 +544,10 @@ arma::vec RS_AL_MARHOUN(double t, const double p, const double api, const double
   Pb = PB_AL_MARHOUN(t,api,spgr,rsi);
   if (p >= Pb) {
     Rs(0) = rsi;
-    Rs(1) = 0;
+    Rs(1) = 0.;
   } else {
-    Rs(0) = a(0) * pow(spgr,a(1)) * pow(p,a(2)) * pow(spgr_o,a(3)) * pow(t,a(4));
-    Rs(1) = a(2) * a(0) * pow(spgr,a(1)) * pow(p,(a(2)-1)) * pow(spgr_o,a(3)) * pow(t,a(4));
+    Rs(0) = a(0) * std::pow(spgr,a(1)) * std::pow(p,a(2)) * std::pow(spgr_o,a(3)) * std::pow(t,a(4));
+    Rs(1) = a(2) * a(0) * std::pow(spgr,a(1)) * std::pow(p,(a(2)-1.)) * std::pow(spgr_o,a(3)) * std::pow(t,a(4));
   }
   return(Rs);
 }
@@ -560,8 +560,8 @@ arma::vec BOB_AL_MARHOUN(double t, const double api, const double spgr, const do
   // p in psia
   arma::vec Bo(2);
   double spgr_o = 141.5 / (131.5 + api);
-  double f = pow(rsi,0.74239) * pow(spgr,0.323294) * pow(spgr_o,-1.20204);
-  double df_drs = 0.74239 * pow(rsi,-0.25761) * pow(spgr,0.323294) * pow(spgr_o,-1.20204);
+  double f = std::pow(rsi,0.74239) * std::pow(spgr,0.323294) * std::pow(spgr_o,-1.20204);
+  double df_drs = 0.74239 * std::pow(rsi,-0.25761) * std::pow(spgr,0.323294) * std::pow(spgr_o,-1.20204);
   Bo(0) = 0.497069 + 0.862963e-3 * t + 0.182594e-2 * f + 0.318099e-5 * f * f;
   Bo(1) = 0.182594e-2 * df_drs + 2 *  0.318099e-5 * f * df_drs;
   return(Bo);
@@ -579,7 +579,7 @@ double CO_UNDERSAT_AL_MARHOUN(double t, const double p, const double api, const 
   double Bob = BOB_AL_MARHOUN(t,api,spgr,rsi)(0);
   double spgr_o = 141.5 / (131.5 + api);
   double spgr_ob = (spgr_o + 0.000218 * rsi * spgr) / Bob;
-  Co = exp(a(0) + a(1) / spgr_ob + a(2) * (p - Pb) / pow(spgr_ob,3) + a(3) / t);
+  Co = exp(a(0) + a(1) / spgr_ob + a(2) * (p - Pb) / std::pow(spgr_ob,3) + a(3) / t);
   return(Co);
 }
 
@@ -598,7 +598,7 @@ arma::vec BO_AL_MARHOUN(double t, const double p, const double api, const double
     // Co = CO_UNDERSAT_AL_MARHOUN(t,p,api,spgr,rsi);
     Co = CO_UNDERSAT_SPIVEY(t,p,Pb,api,spgr,rsi);
     Bo(0) = Bob * exp(Co * (Pb - p));
-    Bo(1) = 0;
+    Bo(1) = 0.;
   } else {
     Rs = RS_AL_MARHOUN(t,p,api,spgr,rsi)(0);
     Bo(0) = BOB_AL_MARHOUN(t,api,spgr,Rs)(0);
@@ -664,9 +664,9 @@ double PB_GLASO(double t, const double api, const double spgr, const double rsi)
   // p in psia
   double Pb;
   t = t - 459.67;
-  double x = pow((rsi/spgr),0.816) * pow(t,0.172) / pow(api,0.989);
+  double x = std::pow((rsi/spgr),0.816) * std::pow(t,0.172) / std::pow(api,0.989);
   double a = -0.30218 * log10(x) * log10(x) + 1.7447 * log10(x) + 1.7669;
-  Pb = pow(10,a);
+  Pb = std::pow(10.,a);
   return(Pb);
 }
 
@@ -687,21 +687,21 @@ arma::vec RSi_GLASO(double t, const double pb, const double api, const double sp
   double y1 = (-b+sqrt(delta))/(2*a);
   double y2 = (-b-sqrt(delta))/(2*a);
   x = std::min(y1,y2);
-  z = pow(10,x);
-  double sol = z * pow(api,0.989)/pow(t,0.172);
-  Rsi(0) = pow(sol,(1/0.816)) * spgr;
+  z = std::pow(10.,x);
+  double sol = z * std::pow(api,0.989)/std::pow(t,0.172);
+  Rsi(0) = std::pow(sol,(1./0.816)) * spgr;
   if (y1 <= y2) {
     u = y1;
-    dc_dp = -1/pb/log(10);
-    du_dc = -1 * pow(b*b-4*a*c,-0.5);
-    dx_du = log(10)*pow(10,u);
+    dc_dp = -1./pb/log(10.);
+    du_dc = -1. * std::pow(b*b-4.*a*c,-0.5);
+    dx_du = log(10.)*std::pow(10.,u);
   } else {
     u = y2;
-    dc_dp = -1/pb/log(10);
-    du_dc = 1 * pow(b*b-4*a*c,-0.5);
-    dx_du = log(10)*pow(10,u);
+    dc_dp = -1./pb/log(10.);
+    du_dc = 1. * std::pow(b*b-4.*a*c,-0.5);
+    dx_du = log(10.)*std::pow(10.,u);
   }
-  double dRsi_dx = (1/0.816) * pow(z,(1/0.816)-1) * pow(pow(api,0.989)/pow(t,0.172),(1/0.816)) * spgr;
+  double dRsi_dx = (1./0.816) * std::pow(z,(1./0.816)-1.) * std::pow(std::pow(api,0.989)/std::pow(t,0.172),(1./0.816)) * spgr;
   Rsi(1) = dRsi_dx * dx_du * du_dc * dc_dp;
   return(Rsi);
 }
@@ -726,24 +726,24 @@ arma::vec RS_GLASO(double t, const double p, const double api, const double spgr
   x = std::min(y1,y2);
   if (p >= Pb) {
     Rs(0) = rsi;
-    Rs(1) = 0;
+    Rs(1) = 0.;
   } else {
-    z = pow(10,x);
-    double sol = z * pow(api,0.989)/pow(t,0.172);
-    Rs(0) = pow(sol,(1/0.816)) * spgr;
+    z = std::pow(10.,x);
+    double sol = z * std::pow(api,0.989)/std::pow(t,0.172);
+    Rs(0) = std::pow(sol,(1./0.816)) * spgr;
     if (y1 <= y2) {
       u = y1;
-      dc_dp = -1/p/log(10);
-      du_dc = -1 * pow(b*b-4*a*c,-0.5);
-      dx_du = log(10)*pow(10,u);
+      dc_dp = -1./p/log(10.);
+      du_dc = -1. * std::pow(b*b-4.*a*c,-0.5);
+      dx_du = log(10.)*std::pow(10.,u);
 
     } else {
       u = y2;
-      dc_dp = -1/p/log(10);
-      du_dc = 1 * pow(b*b-4*a*c,-0.5);
-      dx_du = log(10)*pow(10,u);
+      dc_dp = -1./p/log(10.);
+      du_dc = 1. * std::pow(b*b-4.*a*c,-0.5);
+      dx_du = log(10.)*std::pow(10.,u);
     }
-    double dRs_dx = (1/0.816) * pow(z,(1/0.816)-1) * pow(pow(api,0.989)/pow(t,0.172),(1/0.816)) * spgr;
+    double dRs_dx = (1./0.816) * std::pow(z,(1./0.816)-1.) * std::pow(std::pow(api,0.989)/std::pow(t,0.172),(1./0.816)) * spgr;
     Rs(1) = dRs_dx * dx_du * du_dc * dc_dp;
   }
   return(Rs);
@@ -758,14 +758,14 @@ arma::vec BOB_GLASO(double t, const double api, const double spgr, const double 
   t = t - 459.67;
   arma::vec Bo(2);
   double spgr_o = 141.5 / (131.5 + api);
-  double y = rsi * pow((spgr/spgr_o),0.526) + 0.968 * t;
+  double y = rsi * std::pow((spgr/spgr_o),0.526) + 0.968 * t;
   double log10_y = log10(y);
-  double dy_dRs = pow(spgr/spgr_o,0.526);
+  double dy_dRs = std::pow(spgr/spgr_o,0.526);
   double f = -6.58511+2.91329*log10_y-0.27683*log10_y*log10_y;
   double df_dlog10_y = 2.91329-2*0.27683*log10_y;
-  double dlog10_y_dy = 1/y/log(10);
-  double dB_df = log(10) * pow(10,f) ;
-  Bo(0) = pow(10,f) + 1;
+  double dlog10_y_dy = 1./y/log(10.);
+  double dB_df = log(10.) * std::pow(10.,f) ;
+  Bo(0) = std::pow(10.,f) + 1.;
   Bo(1) = dB_df * df_dlog10_y * dlog10_y_dy * dy_dRs;
   return(Bo);
 }
@@ -782,7 +782,7 @@ double CO_UNDERSAT_GLASO(double t, const double p, const double api, const doubl
   double Bob = BOB_GLASO(t,api,spgr,rsi)(0);
   double spgr_o = 141.5 / (131.5 + api);
   double spgr_ob = (spgr_o + 0.000218 * rsi * spgr) / Bob;
-  Co = exp(a(0) + a(1) / spgr_ob + a(2) * (p - Pb) / pow(spgr_ob,3) + a(3) / t);
+  Co = exp(a(0) + a(1) / spgr_ob + a(2) * (p - Pb) / std::pow(spgr_ob,3.) + a(3) / t);
   return(Co);
 }
 
@@ -801,7 +801,7 @@ arma::vec BO_GLASO(double t, const double p, const double api, const double spgr
     // Co = CO_UNDERSAT_GLASO(t,p,api,spgr,rsi);
     Co = CO_UNDERSAT_SPIVEY(t,p,Pb,api,spgr,rsi);
     Bo(0) = Bob * exp(Co * (Pb - p));
-    Bo(1) = 0;
+    Bo(1) = 0.;
   } else {
     Rs = RS_GLASO(t,p,api,spgr,rsi)(0);
     Bo(0) = BOB_GLASO(t,api,spgr,Rs)(0);
@@ -895,26 +895,26 @@ double MUO_BEGGS_ROBINSON(const std::string pvt_model, double t, const double p,
   t = t - 459.67;
   if (p >= Pb) {
     z = 3.0324 - 0.02023 * api;
-    y = pow(10,z);
-    x = y * pow(t,-1.163);
-    muo_dead = pow(10,x) - 1;
-    A = 10.715 * pow(rsi + 100, -0.515);
-    B = 5.44 * pow(rsi + 150, -0.338);
-    muo_live = A * pow(muo_dead,B);
+    y = std::pow(10.,z);
+    x = y * std::pow(t,-1.163);
+    muo_dead = std::pow(10.,x) - 1.;
+    A = 10.715 * std::pow(rsi + 100, -0.515);
+    B = 5.44 * std::pow(rsi + 150., -0.338);
+    muo_live = A * std::pow(muo_dead,B);
     double C1 = 2.6;
     double C2 = 1.187;
     double C3 = -11.513;
-    double C4 = -8.98 * pow(10,-5);
-    double W = C1 * pow(p,C2) * exp(C3 + C4 * p);
-    MUO_BEGGS_ROBINSON = muo_live * pow(p / Pb,W);
+    double C4 = -8.98 * std::pow(10.,-5.);
+    double W = C1 * std::pow(p,C2) * exp(C3 + C4 * p);
+    MUO_BEGGS_ROBINSON = muo_live * std::pow(p / Pb,W);
   } else {
     z = 3.0324 - 0.02023 * api;
-    y = pow(10,z);
-    x = y * pow(t,-1.163);
-    muo_dead = pow(10,x) - 1;
-    A = 10.715 * pow(Rs + 100, -0.515);
-    B = 5.44 * pow(Rs + 150, -0.338);
-    MUO_BEGGS_ROBINSON = A * pow(muo_dead,B);
+    y = std::pow(10.,z);
+    x = y * std::pow(t,-1.163);
+    muo_dead = std::pow(10.,x) - 1.;
+    A = 10.715 * std::pow(Rs + 100., -0.515);
+    B = 5.44 * std::pow(Rs + 150., -0.338);
+    MUO_BEGGS_ROBINSON = A * std::pow(muo_dead,B);
   }
   return(MUO_BEGGS_ROBINSON);
 }
@@ -935,9 +935,9 @@ double MUO_AL_MARHOUN(const std::string pvt_model, double t, const double p, con
   double spgr_o = 141.5 / (131.5 + api);
 
   double visc_dead = exp(a(0) + a(1) * log(t-459.67) + a(2) * log(log(api)) + a(3) * log(t-459.67) * log(log(api)));
-  double a_ob = b(0) * pow(rsi + b(1),b(2));
-  double b_ob = b(3) * pow(rsi + b(4),b(5));
-  double visc_ob = a_ob * pow(visc_dead,b_ob);
+  double a_ob = b(0) * std::pow(rsi + b(1),b(2));
+  double b_ob = b(3) * std::pow(rsi + b(4),b(5));
+  double visc_ob = a_ob * std::pow(visc_dead,b_ob);
 
   if (pvt_model == "Standing") {
     Pb = PB_STANDING(t,api,spgr,rsi);
@@ -980,12 +980,12 @@ double MUO_AL_MARHOUN(const std::string pvt_model, double t, const double p, con
     spgr_ob = (spgr_o + 0.000218 * rsi * spgr) / Bob;
   }
   if (p >= Pb) {
-    MUO_AL_MARHOUN = exp(log(visc_ob) + 0.000151292 * pow(spgr_ob,2) * (p - Pb));
+    MUO_AL_MARHOUN = exp(log(visc_ob) + 0.000151292 * std::pow(spgr_ob,2.) * (p - Pb));
   } else {
-    a_ub = b(0) * pow(Rs + b(1),b(2));
-    b_ub = b(3) * pow(Rs + b(4),b(5));
-    visc_ub = a_ub * pow(visc_dead,b_ub);
-    MUO_AL_MARHOUN = exp(log(visc_ub) + 0.000151292 * pow(spgr_ub,2) * (p - Pb));
+    a_ub = b(0) * std::pow(Rs + b(1),b(2));
+    b_ub = b(3) * std::pow(Rs + b(4),b(5));
+    visc_ub = a_ub * std::pow(visc_dead,b_ub);
+    MUO_AL_MARHOUN = exp(log(visc_ub) + 0.000151292 * std::pow(spgr_ub,2.) * (p - Pb));
   }
   return(MUO_AL_MARHOUN);
 }
@@ -1000,7 +1000,7 @@ double MUO_AL_MARHOUN(const std::string pvt_model, double t, const double p, con
 arma::mat PVT_OIL_PROPERTIES_STANDING(double t, arma::vec p, double spgr, double api, double rsi, double tpc, double ppc) {
 
   double psca = 14.696;              // Psia
-  double tsc = (60 + 459.67);        // R
+  double tsc = (60. + 459.67);        // R
   int lp = p.size();
   arma::mat results_table(lp,4);
   for (int i = 0; i < lp; i++) {
@@ -1019,7 +1019,7 @@ arma::mat PVT_OIL_PROPERTIES_STANDING(double t, arma::vec p, double spgr, double
 arma::mat PVT_OIL_PROPERTIES_VASQUEZ_BEGGS(double t, arma::vec p, double spgr, double api, double rsi, double tpc, double ppc) {
 
   double psca = 14.696;              // Psia
-  double tsc = (60 + 459.67);        // R
+  double tsc = (60. + 459.67);        // R
   int lp = p.size();
   arma::mat results_table(lp,4);
   for (int i = 0; i < lp; i++) {
@@ -1036,7 +1036,7 @@ arma::mat PVT_OIL_PROPERTIES_VASQUEZ_BEGGS(double t, arma::vec p, double spgr, d
 arma::mat PVT_OIL_PROPERTIES_FARSHAD_PETROSKY(double t, arma::vec p, double spgr, double api, double rsi, double tpc, double ppc) {
 
   double psca = 14.696;              // Psia
-  double tsc = (60 + 459.67);        // R
+  double tsc = (60. + 459.67);        // R
   int lp = p.size();
   arma::mat results_table(lp,4);
   for (int i = 0; i < lp; i++) {
@@ -1053,7 +1053,7 @@ arma::mat PVT_OIL_PROPERTIES_FARSHAD_PETROSKY(double t, arma::vec p, double spgr
 arma::mat PVT_OIL_PROPERTIES_AL_MARHOUN(double t, arma::vec p, double spgr, double api, double rsi, double tpc, double ppc) {
 
   double psca = 14.696;              // Psia
-  double tsc = (60 + 459.67);        // R
+  double tsc = (60. + 459.67);        // R
   int lp = p.size();
   arma::mat results_table(lp,4);
   for (int i = 0; i < lp; i++) {
@@ -1070,7 +1070,7 @@ arma::mat PVT_OIL_PROPERTIES_AL_MARHOUN(double t, arma::vec p, double spgr, doub
 arma::mat PVT_OIL_PROPERTIES_GLASO(double t, arma::vec p, double spgr, double api, double rsi, double tpc, double ppc) {
 
   double psca = 14.696;              // Psia
-  double tsc = (60 + 459.67);        // R
+  double tsc = (60. + 459.67);        // R
   int lp = p.size();
   arma::mat results_table(lp,4);
   for (int i = 0; i < lp; i++) {

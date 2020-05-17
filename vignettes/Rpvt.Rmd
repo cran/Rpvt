@@ -163,8 +163,10 @@ mp_plot <- pvt_gas_1 %>% ggplot(aes(x = `P(Psig)`, y = `m(p)(Psia^2/cp)`)) +
   xlab(label = "P (Psig)") +
   ylab(label = "Pseudopressure (Psia^2/cp)") +
   theme_bw()
+
 gas_pvt_plots <- ggarrange(Z_plot, Density_plot, Bg_plot, Cg_plot, MUg_plot, mp_plot,
                       ncol = 2, nrow = 3, align = "v")
+
 
 gas_pvt_plots 
 ```

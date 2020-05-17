@@ -32,7 +32,7 @@ NumericMatrix PVT_GAS_PROPERTIES(Rcpp::List lst) {
     arma::mat nhc_properties(3,4);
     double p_imp; double t_imp; double psc;
     double mw_cond; double spgr_cond; double gor;
-    double dp = 10; double p_min = 0; int lp;
+    double dp = 10.; double p_min = 0.; int lp;
     double kpa_to_psi = 0.14503773800722;
     double m3_to_scf = 35.314667;
     double m3_to_bbl = 6.289814;
@@ -49,22 +49,21 @@ NumericMatrix PVT_GAS_PROPERTIES(Rcpp::List lst) {
 
     if (input_unit == "SI") {
         p_imp = p * kpa_to_psi;     // kPag to Psig
-        t_imp = t * 1.8 + 32;       // C to F
+        t_imp = t * 1.8 + 32.;       // C to F
         t_imp = t_imp + 459.67;     // F to R
-        psc = 0;                    // Psig
+        psc = 0.;                    // Psig
         cgr = cgr * (scf_stb_to_sm3_sm3) * 1e06;     // STB/MMSCF
     } else {
         p_imp = p;                  // Psig
         t_imp = t + 459.67;         // F to R
-        psc = 0;                    // Psig
+        psc = 0.;                    // Psig
     }
-    if (cgr == 0) {
-        spgr = spgr;
+    if (cgr == 0.) {
     } else {
-        mw_cond = 6084 / (api - 5.9);
+        mw_cond = 6084. / (api - 5.9);
         spgr_cond = 141.5 / (131.5 + api);
-        gor = 1e6 / cgr;
-        spgr = (gor * spgr + 4580 * spgr_cond) / (gor + 133000 * spgr_cond / mw_cond);
+        gor = 1.e6 / cgr;
+        spgr = (gor * spgr + 4580. * spgr_cond) / (gor + 133000. * spgr_cond / mw_cond);
     }
     double tpc = TPC_SUTTON(spgr,nhc_properties,fluid);
     double ppc = PPC_SUTTON(spgr,nhc_properties,fluid);
@@ -111,12 +110,12 @@ NumericMatrix PVT_GAS_PROPERTIES(Rcpp::List lst) {
     results_table.insert_cols(results_table.n_cols,pvt_gas_result);
     if (output_unit == "SI") {
         for (int i = 0; i < lp; i++) {
-        results_table(i,0) = (results_table(i,0)-32)/1.8;                               // F to C
+        results_table(i,0) = (results_table(i,0)-32.)/1.8;                               // F to C
         results_table(i,1) = results_table(i,1) / kpa_to_psi;                           // Psig to kPag
         results_table(i,3) = results_table(i,3) / kg_m3_to_lb_cuft;                     // lb/cuft to kg/m3
         results_table(i,4) = results_table(i,4) * m3_to_scf / m3_to_bbl;                // rm3/Sm3
         results_table(i,5) = results_table(i,5) * kpa_to_psi;                           // 1/Psi to 1/kPa
-        results_table(i,7) = results_table(i,7) / kpa_to_psi / kpa_to_psi / 1e06;       // Psi^2/cp to MPa^2/mPa.s
+        results_table(i,7) = results_table(i,7) / kpa_to_psi / kpa_to_psi / 1.e06;       // Psi^2/cp to MPa^2/mPa.s
         }
     }
     results_table_ = wrap(results_table);                                               // converting arma::mat to Rcpp::NumericMatrix
@@ -161,13 +160,13 @@ NumericMatrix PVT_OIL_PROPERTIES(Rcpp::List lst) {
 
     arma::mat nhc_properties(3,4);
     double p_imp; double t_imp; double psc;
-    double dp = 10; double p_min = 0; int lp;
+    double dp = 10.; double p_min = 0.; int lp;
     double kpa_to_psi = 0.14503773800722;
     double m3_to_scf = 35.314667;
     double m3_to_bbl = 6.289814;
     double kg_m3_to_lb_cuft = 0.06242796;
     double scf_stb_to_sm3_sm3 = 0.1781077;
-    double pb = 0; double rsi = 0;
+    double pb = 0.; double rsi = 0.;
     String gas_type = "dry_gas";
 
     arma::vec nhc_mw = {28.01, 34.08, 44.01};
@@ -180,13 +179,13 @@ NumericMatrix PVT_OIL_PROPERTIES(Rcpp::List lst) {
 
     if (input_unit == "SI") {
         p_imp = p * kpa_to_psi;     // kPag to Psig
-        t_imp = t * 1.8 + 32;       // C to F
+        t_imp = t * 1.8 + 32.;       // C to F
         t_imp = t_imp + 459.67;     // F to R
-        psc = 0;                    // Psig
+        psc = 0.;                    // Psig
     } else {
         p_imp = p;                  // Psig
         t_imp = t + 459.67;         // F to R
-        psc = 0;                    // Psig
+        psc = 0.;                    // Psig
     }
     double tpc = TPC_SUTTON(spgr,nhc_properties,gas_type);
     double ppc = PPC_SUTTON(spgr,nhc_properties,gas_type);
@@ -300,7 +299,7 @@ NumericMatrix PVT_OIL_PROPERTIES(Rcpp::List lst) {
     results_table.insert_cols(results_table.n_cols,pvt_gas_result);
     if (output_unit == "SI") {
         for (int i = 0; i < lp; i++) {
-            results_table(i,0) = (results_table(i,0)-32)/1.8;                               // F to C
+            results_table(i,0) = (results_table(i,0)-32.)/1.8;                               // F to C
             results_table(i,1) = results_table(i,1) / kpa_to_psi;                           // Psig to kPag
             results_table(i,2) = results_table(i,2) * scf_stb_to_sm3_sm3;                   // scf/stb to sm3/sm3
             results_table(i,4) = results_table(i,4) / kg_m3_to_lb_cuft;                     // lb/cuft to kg/m3
@@ -350,7 +349,7 @@ NumericMatrix PVT_WATER_PROPERTIES(Rcpp::List lst) {
 
     arma::mat nhc_properties(3,4);
     double p_imp; double t_imp; double psc;
-    double dp = 10; double p_min = 0; int lp;
+    double dp = 10.; double p_min = 0.; int lp;
     double kpa_to_psi = 0.14503773800722;
     double m3_to_scf = 35.314667;
     double m3_to_bbl = 6.289814;
@@ -369,13 +368,13 @@ NumericMatrix PVT_WATER_PROPERTIES(Rcpp::List lst) {
 
     if (input_unit == "SI") {
         p_imp = p * kpa_to_psi;     // kPag to Psig
-        t_imp = t * 1.8 + 32;       // C to F
+        t_imp = t * 1.8 + 32.;       // C to F
         t_imp = t_imp + 459.67;     // F to R
-        psc = 0;                    // Psig
+        psc = 0.;                    // Psig
     } else {
         p_imp = p;                  // Psig
         t_imp = t + 459.67;         // F to R
-        psc = 0;                    // Psig
+        psc = 0.;                    // Psig
     }
 
     double tpc = TPC_SUTTON(spgr,nhc_properties,gas_type);
@@ -439,7 +438,7 @@ NumericMatrix PVT_WATER_PROPERTIES(Rcpp::List lst) {
     results_table.insert_cols(results_table.n_cols,visc_water_result);
     if (output_unit == "SI") {
         for (int i = 0; i < lp; i++) {
-            results_table(i,0) = (results_table(i,0)-32)/1.8;                               // F to C
+            results_table(i,0) = (results_table(i,0)-32.)/1.8;                               // F to C
             results_table(i,1) = results_table(i,1) / kpa_to_psi;                           // Psig to kPag
             results_table(i,2) = results_table(i,2) / (m3_to_scf / m3_to_bbl);              // scf/STB to sm3/sm3
             results_table(i,4) = results_table(i,4) / kg_m3_to_lb_cuft;                     // lb/cuft to kg/m3
